@@ -37,6 +37,7 @@ def load_agentic_ai_ui():
             graph_builder = GraphBuilder(model=model)
             
             try:
+                print(f"Setting up graph for use case: {usecase}")
                 graph = graph_builder.setup_graph(usecase=usecase)
                 DisplayResult(usecase=usecase, graph=graph, user_message=user_message).display_result_on_ui()
                 

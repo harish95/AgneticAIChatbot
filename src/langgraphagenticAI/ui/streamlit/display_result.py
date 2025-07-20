@@ -58,3 +58,42 @@ class DisplayResult:
                         # Handle dictionary with content key
                         with st.chat_message("assistant"):
                             st.write(value["content"])
+                            
+        elif usecase == "Chatbot with Web":
+            # Create proper message format for the graph
+            messages = [HumanMessage(content=user_message)]
+            
+            # Display user message first
+            with st.chat_message("user"):
+                st.write(user_message)
+            
+            for event in graph.stream({'messages': ("user", user_message)}):
+                print(event.values())
+                
+                for value in event.values():
+                    print(f"Value type: {type(value)}")
+                    print(f"Value content: {value}")
+                    
+                    if isinstance(value, dict) and "messages" in value:
+                        message = value["messages"]
+                        
+                        if isinstance(message, list):
+                            for msg in message:
+                                if isinstance(msg, AIMessage):
+                                    with st.chat_message("assistant"):
+                                        st.write(msg.content)
+                                elif isinstance(msg, ToolMessage):
+                                    with st.chat_message("tool"):
+                                        st.write(msg.content)
+                        elif isinstance(message, AIMessage):
+                            with st.chat_message("assistant"):
+                                st.write(message.content)
+                        elif isinstance(message, ToolMessage):
+                            with st.chat_message("tool"):
+                                st.write(message.content)
+                    elif isinstance(value, AIMessage):
+                        with st.chat_message("assistant"):
+                            st.write(value.content)
+                    elif isinstance(value, ToolMessage):
+                        with st.chat_message("tool"):
+                            st.write(value.content)
