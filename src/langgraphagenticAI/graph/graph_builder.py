@@ -4,6 +4,8 @@ from src.langgraphagenticAI.nodes.basic_chatbot_node import BasicChatbotNode
 from src.langgraphagenticAI.tools.search_tool import get_tools, create_tool_node
 from langgraph.prebuilt import tools_condition, ToolNode
 from src.langgraphagenticAI.nodes.chatbot_with_tool import ChatbotWithToolNode
+from src.langgraphagenticAI.nodes.ai_news_node import AINewsNode
+
 
 class GraphBuilder:
     def __init__(self, model):
@@ -59,6 +61,27 @@ class GraphBuilder:
                 graph_builder.add_edge("chatbot", END)
                 
                 print("Chatbot with web graph built successfully")
+            
+            elif usecase == "AI News":
+                print("Building AI News graph...")
+                
+                # Define the AI News node
+                ai_news_node = AINewsNode(self.llm)
+                
+                # Add the AI News node to the graph
+                graph_builder.add_node("fetch_news", ai_news_node.fetch_news)
+                graph_builder.add_node("summarize_news",ai_news_node.summarize_news)
+                graph_builder.add_node("save_result",ai_news_node.save_result)
+                
+                
+                # Define edges
+                graph_builder.set_entry_point("fetch_news")
+                graph_builder.add_edge("fetch_news", "summarize_news")
+                graph_builder.add_edge("summarize_news", "save_result") 
+                graph_builder.add_edge("save_result", END)
+                
+                print("AI News graph built successfully")
+            
             else:
                 raise ValueError(f"Unknown usecase: {usecase}")
             

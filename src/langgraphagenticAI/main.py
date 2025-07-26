@@ -15,7 +15,11 @@ def load_agentic_ai_ui():
         st.error("Failed to load user controls. Please check the configuration.")
         return
 
-    user_message = st.chat_input("Enter your message:")
+    if st.session_state.IsFetchButtonClicked :
+        user_message = st.session_state.timeframe        
+    else:
+        user_message = st.chat_input("Enter your message:")
+    
     
     if user_message:
         try:
